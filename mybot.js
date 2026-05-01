@@ -1,48 +1,87 @@
 const mineflayer = require('mineflayer');
 
-const botOptions = {
-    host: 'zahridinsmp.aternos.me',
-    port: 48315,
-    username: 'notAFK1',
-    version: false // Server versiyasini bot o'zi aniqlaydi
-};
+const serverHost = 'zahridinsmp.aternos.me';
+const serverPort = 48315;
 
-function createBot() {
-    const bot = mineflayer.createBot(botOptions);
+const accounts = [
+  { username: 'notAFK1', password: 'shukrona' },
+];
 
-    // Serverga ulanganda
+function startBot(account) {
+    console.log(`[ULANISH] ${account.username} ulanmoqda...`);
+
+    const bot = mineflayer.createBot({
+        host: serverHost,
+        port: serverPort,
+        username: account.username,
+        version: '1.21',
+        hideErrors: true,
+        connectTimeout: 60000,
+        keepAlive: true
+    });
+
+    // Anarxiya2 ga o'tish funksiyasi
+    const goToAnarchy = () => {
+        if (bot.entity) {
+            bot.chat('/bc all qq');
+            console.log(`[MAJBURIY] ${account.username}: /server anarxiya2 yuborildi.`);
+        }
+    };
+
+    const goToAFKWarp = () => {
+        if (bot.entity) {
+            bot.chat('/bc all afk man');
+            console.log(`[WARP] ${account.username}: /warp afk yuborildi.`);
+        }
+    };
+
+    // 1. HUBDAN CHIQA OLMAY QOLSA - XABARLARNI ANALIZ QILISH
+    bot.on('messagestr', (msg) => {
+        const cleanMsg = msg.trim().toLowerCase();
+        
+        // Login qismi
+        if (cleanMsg.includes('/login') || cleanMsg.includes('login') || cleanMsg.includes('tizimga kirish')) {
+            bot.chat(`/login ${account.password}`);
+            return;
+        }
+
+        // Hubda ekanini anglatuvchi har qanday so'z kelsa (hub, lobby, articraft)
+        // Yoki uzoq vaqt chatda harakat bo'lmasa ham o'tishga harakat qiladi
+        if (cleanMsg.includes('hub') || cleanMsg.includes('lobby') || cleanMsg.includes('articraft') || cleanMsg.includes('xush kelibsiz')) {
+            setTimeout(goToAnarchy, 10000); // 10 soniya kutib o'tadi
+        }
+    });
+
+    // 2. MAJBURIY TAYMERLAR (Xabarga bog'liq bo'lmagan holda ishlaydi)
     bot.on('spawn', () => {
-        console.log(`[Bot] ${bot.username} serverga kirdi.`);
+        console.log(`[OK] ${account.username} spawn bo'ldi.`);
         
-        // Siz yaratgan script bo'yicha login qilish
-        // Login: shukrona
-        setTimeout(() => {
-            bot.chat('/login shukrona');
-            console.log(`[Bot] Login buyrug'i yuborildi.`);
-        }, 2000); 
+        // Bot har safar kutilmaganda spawn bo'lsa (masalan restartdan keyin), 15 soniyadan keyin o'tadi
+        setTimeout(goToAnarchy, 15000);
+
+        // HAR 5 DAQIQADA MAJBURIY /server anarxiya2
+        // Bu taymer xabar kelsa-kelmasa baribir ishlaydi!
+        setInterval(() => {
+            goToAnarchy();
+        }, 300000);
+
+        // Har 3 soatda /warp afk
+        setInterval(() => {
+            goToAFKWarp();
+        }, 10800000);
     });
 
-    // Bot o'limi yoki chiqib ketishi (Reconnect funksiyasi)
     bot.on('end', (reason) => {
-        console.log(`[Bot] Serverdan chiqib ketdi. Sabab: ${reason}`);
-        console.log(`[Bot] 5 soniyadan so'ng qayta ulanishga harakat qilinadi...`);
-        
-        setTimeout(() => {
-            createBot();
-        }, 5000);
+        console.log(`[!] ${account.username} uzildi. 30 soniyadan keyin qayta kiradi...`);
+        setTimeout(() => startBot(account), 30000);
     });
 
-    // Xatolik yuz berganda
-    bot.on('error', (err) => {
-        console.log(`[Bot] Xatolik yuz berdi: ${err.message}`);
-    });
-
-    // Chatda xabarlarni ko'rish (Konsol uchun)
-    bot.on('chat', (username, message) => {
-        if (username === bot.username) return;
-        console.log(`<${username}> ${message}`);
-    });
+    bot.on('error', (err) => console.log(`[ERR] ${account.username}: ${err.message}`));
 }
 
-// Botni ishga tushirish
-createBot();
+// Botlarni kiritish
+accounts.forEach((acc, index) => {
+    setTimeout(() => {
+        startBot(acc);
+    }, index * 45000); 
+});
