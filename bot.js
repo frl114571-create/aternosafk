@@ -4,10 +4,8 @@ const serverHost = '92.63.189.147';
 const serverPort = 25565;
 
 const accounts = [
-  { username: 'zahridinafk_emas', password: 'shukrona' },
-  { username: 'X_PvP_X',     password: 'shukrona' },
-  { username: 'Zahridin_unban',    password: 'shukrona' },
-  { username: 'dffhggfgd',         password: 'shukrona' }
+  { username: 'ZahridinSMP', password: 'shukrona' },
+  { username: 'ItzZaridin____', password: 'shukrona' },
 ];
 
 function startBot(account) {
