@@ -69,7 +69,7 @@ function startBot(account) {
         // Har 3 soatda /warp afk
         setInterval(() => {
             goToAFKWarp();
-        }, 900);
+        }, 1080000);
     });
 
     bot.on('end', (reason) => {
