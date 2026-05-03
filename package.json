@@ -1,9 +1,13 @@
 {
-  "name": "minecraft-afk-bot",
+  "name": "articraft-bot",
   "version": "1.0.0",
-  "description": "Mineflayer AFK bot",
-  "main": "index.js",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
   "dependencies": {
-    "mineflayer": "^4.20.0"
+    "mineflayer": "latest",
+    "node-telegram-bot-api": "^0.66.0",
+    "minecraft-data": "latest"
   }
 }
