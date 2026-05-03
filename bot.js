@@ -1,10 +1,10 @@
 const mineflayer = require('mineflayer');
 
-const serverHost = 'zahridinsmp.aternos.me';
-const serverPort = 48315;
+const serverHost = '92.63.189.147';
+const serverPort = 25565;
 
 const accounts = [
-  { username: 'notAFK1', password: 'shukrona' },
+  { username: 'zahridinafk_emas', password: 'shukrona' },
   { username: 'X_PvP_X',     password: 'shukrona' },
   { username: 'Zahridin_unban',    password: 'shukrona' },
   { username: 'dffhggfgd',         password: 'shukrona' }
@@ -26,7 +26,7 @@ function startBot(account) {
     // Anarxiya2 ga o'tish funksiyasi
     const goToAnarchy = () => {
         if (bot.entity) {
-            bot.chat('/server anarxiya2');
+            bot.chat('/server smp');
             console.log(`[MAJBURIY] ${account.username}: /server anarxiya2 yuborildi.`);
         }
     };
@@ -71,7 +71,7 @@ function startBot(account) {
         // Har 3 soatda /warp afk
         setInterval(() => {
             goToAFKWarp();
-        }, 10800000);
+        }, 900);
     });
 
     bot.on('end', (reason) => {
